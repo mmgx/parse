@@ -19,7 +19,7 @@ class CreateSubcategoriesTable extends Migration
             $table->bigInteger('category_id')->nullable();
             $table->string('title');
             $table->string('url')->nullable();
-            $table->string('name', 100);
+            $table->string('name');
             $table->string('image')->nullable();
             $table->timestamps();
         });
