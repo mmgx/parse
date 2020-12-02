@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Marka extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['marka_id', 'subcategory_id', 'name', 'title', 'price', 'description', 'image'];
 }
