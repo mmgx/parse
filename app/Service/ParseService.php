@@ -372,21 +372,22 @@ class ParseService extends Base\BaseService implements ParseServiceContract
 
                 $price = $element->find('.table_sech_pod')[1]->text ?: null;
                 $title = $element->find('a text')->text ?: null;
-                $link = $element->find('a')[0]->href;
+                $link = $element->find('a')[0]->href ?: null;
 
-                $newMarkas = new Marka([
-                    'marka_id' => ($subcategory->subcategory_id * 1000 + $id) ?: null,
-                    'subcategory_id' => $subcategory->subcategory_id ?: null,
-                    'title' => $title ?: null,
-                    'image' => $subcategory->image ?: null,
-                    'price' => $price ?: null,
-                    'url' => $link ?: null,
-                    'description' => $description ?: null,
-                ]);
-                $newMarkas->save();
-                $id++;
+                if ($link){
+                    $newMarkas = new Marka([
+                        'marka_id' => ($subcategory->subcategory_id * 1000 + $id) ?: null,
+                        'subcategory_id' => $subcategory->subcategory_id ?: null,
+                        'title' => $title ?: null,
+                        'image' => $subcategory->image ?: null,
+                        'price' => $price ?: null,
+                        'url' => $link ?: null,
+                        'description' => $description ?: null,
+                    ]);
+                    $newMarkas->save();
+                    $id++;
+                }
         }
-
         return true;
     }
 
@@ -416,8 +417,6 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     private function fillRazmerDbRecord($element, $razmer, $descriptionText, $specificationText)
     {
         $price = $element->find('.moon span')->text ?: null;
-        $id = 1;
-
         $newRazmer = new Razmer([
             'marka_id' => $razmer->marka_id ?: null,
             'title' => $razmer->title ?: null,
