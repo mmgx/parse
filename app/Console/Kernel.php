@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\GetCategoriesInfo;
+use App\Console\Commands\GetMarkaInfo;
+use App\Console\Commands\GetSubcategoriesInfo;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +16,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        GetMarkaInfo::class,
+        GetCategoriesInfo::class,
+        GetSubcategoriesInfo::class,
     ];
 
     /**
