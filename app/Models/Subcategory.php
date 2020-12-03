@@ -9,6 +9,6 @@ class Subcategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['subcategory_id', 'category_id', 'title', 'url', 'name', 'image'];
+    protected $fillable = ['subcategory_id', 'category_id', 'title', 'url', 'image'];
     public $timestamps = false;
 }
