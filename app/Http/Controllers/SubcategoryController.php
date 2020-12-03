@@ -7,6 +7,7 @@ use App\Models\Subcategory;
 use App\Service\ParseService;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class SubcategoryController extends BaseController
 {
@@ -29,10 +30,7 @@ class SubcategoryController extends BaseController
      */
     public function getSubcategories()
     {
-        Subcategory::truncate();
-        $categories = $this->parserService->getCategoriesDB();
-        $this->parserService->fillSubcategories($categories);
-        return true;
+        Artisan::call('get:subcategories');
     }
 
 }

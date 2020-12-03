@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Base\BaseController;
 use App\Service\ParseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class CategoryController extends BaseController
 {
@@ -32,6 +33,6 @@ class CategoryController extends BaseController
      */
     public function getCategories()
     {
-        $this->parserService->getCategoriesToDB();
+        Artisan::call('get:categories');
     }
 }

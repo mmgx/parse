@@ -6,6 +6,7 @@ use App\Http\Controllers\Base\BaseController;
 use App\Service\ParseService;
 use App\Models\Marka;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class MarkaController extends BaseController
 {
@@ -28,9 +29,6 @@ class MarkaController extends BaseController
      */
     public function getMarkas()
     {
-        Marka::truncate();
-        $subcategories = $this->parserService->getSubcategories();
-        $this->parserService->fillMarkas($subcategories);
-        return true;
+        Artisan::call('get:markas');
     }
 }
