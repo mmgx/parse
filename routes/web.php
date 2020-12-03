@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MarkaController;
+use App\Http\Controllers\RazmerController;
 use App\Http\Controllers\SubcategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,10 +28,13 @@ Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
 
 Route::group(['prefix' => 'subcategories', 'as' => 'subcategories.'], function () {
     Route::get('/get', [SubcategoryController::class, 'getSubcategories'])->name('getSubcategories');
-    Route::get('/test', [SubcategoryController::class, 'test'])->name('test');
 });
 
 
 Route::group(['prefix' => 'marka', 'as' => 'marka.'], function () {
     Route::get('/get', [MarkaController::class, 'getMarkas'])->name('getMarkas');
+});
+
+Route::group(['prefix' => 'razmer', 'as' => 'razmer.'], function () {
+    Route::get('/get', [RazmerController::class, 'getRazmer'])->name('getRazmer');
 });

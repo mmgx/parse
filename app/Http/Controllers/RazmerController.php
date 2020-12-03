@@ -25,7 +25,7 @@ class RazmerController extends BaseController
     /**
      * Получить размеры в базу
      */
-    public function getMarkas()
+    public function getRazmer()
     {
         Artisan::call('get:razmer');
     }

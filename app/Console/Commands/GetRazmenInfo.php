@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Razmer;
 use App\Service\ParseService;
 use Illuminate\Console\Command;
 
@@ -42,6 +43,9 @@ class GetRazmenInfo extends Command
      */
     public function handle()
     {
+        Razmer::truncate();
+        $markas = $this->parserService->getMarkas();
+        $this->parserService->fillRazmers($markas);
         return 0;
     }
 }

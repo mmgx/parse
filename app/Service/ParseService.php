@@ -4,8 +4,10 @@ namespace App\Service;
 use App\Contracts\ParseServiceContract;
 use App\Models\Category;
 use App\Models\Marka;
+use App\Models\Razmer;
 use App\Models\Subcategory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use PHPHtmlParser\Dom;
@@ -233,21 +235,21 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillSubcategory(Category $category)
     {
         $page = $this->getDomElementsByClass($this->getUrl($category->url), 'cable_text');
-        $subcategories = $this->getDomElementsById($this->getUrl($category->url), 'cab_osn')->find('li');
+        $subcategories = $this->getDomElementsByClass($this->getUrl($category->url), 'cabel_it li a');
         $id = 1;
 
-        foreach ($subcategories as $subcategory)
-        {
-            $newSubcategory = new Subcategory([
-                'subcategory_id' => ($category->id * 10000) + $id,
-                'category_id' => $category->id,
-                'title' => $this->getSubcategoryTitle($subcategory),
-                'url' => $this->getSubcategoryUrl($subcategory),
-                'name' => $this->getSubcategoryName($subcategory),
-                'image' => $this->getSubcategoryImage($page),
-            ]);
-            $newSubcategory->save();
-            $id++;
+        for ($i = 1; $i <= $subcategories->count()-1; $i++) {
+            if ($subcategories[$i]->href){
+                $newSubcategory = new Subcategory([
+                    'subcategory_id' => ($category->id * 10000) + $id,
+                    'category_id' => $category->id,
+                    'title' => $subcategories[$i]->text,
+                    'url' => $subcategories[$i]->href,
+                    'image' => $page->find('#largeImage')->src,
+                ]);
+                $newSubcategory->save();
+                $id++;
+            }
         }
         return true;
     }
@@ -260,6 +262,23 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function getUrl($url)
     {
         return $this->getSiteUrl() . '/' .$url;
+    }
+
+    /**
+     * Получение списка марок
+     * @return Builder[]|\Illuminate\Database\Eloquent\Collection|Model[]|null[]|object[]
+     */
+    public function getMarkas()
+    {
+        return Marka::query()->first()->get();
+    }
+
+    public function fillRazmers(\Illuminate\Database\Eloquent\Collection $markas)
+    {
+        foreach ($markas as $marka) {
+            $this->fillRazmer($marka);
+        }
+        return true;
     }
 
     /**
@@ -283,15 +302,6 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     }
 
     /**
-     * Получить имя подкатегории
-     * @param $subcategory
-     */
-    private function getSubcategoryName(HtmlNode $node)
-    {
-        return 'Кабель ' .$node->find('a text')->text() . ' в Москве';
-    }
-
-    /**
      * Получить изображение подкатегории
      * @param $subcategory
      */
@@ -309,7 +319,6 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillSubcategories(\Illuminate\Database\Eloquent\Collection $categories)
     {
         foreach ($categories as $category) {
-            if (($category->id != 8) || ($category->id != 9))
                 $this->fillSubcategory($category);
         }
         return true;
@@ -328,7 +337,6 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillMarkas(\Illuminate\Database\Eloquent\Collection $subcategories)
     {
         foreach ($subcategories as $subcategory) {
-//            if (($subcategory->id >= 1) && ($subcategory->id <= 300))
                 $this->fillMarkaDB($subcategory);
         }
         return true;
@@ -378,6 +386,46 @@ class ParseService extends Base\BaseService implements ParseServiceContract
                 $id++;
         }
 
+        return true;
+    }
+
+    /**
+     * Получить id последнего элемента в таблице
+     * @param $model
+     * @param $column
+     * @param $id
+     * @return mixed
+     */
+    public function getLastTableId($model, $column, $id)
+    {
+        return $model::query()->orderBy($column, 'desc')->first()->$id;
+    }
+
+    private function fillRazmer($razmer)
+    {
+        $page = $this->getDomElementsByClass($this->getUrl($razmer->url), 'second_content .workspace');
+            $description = $page->find('#card_wind_1');
+            $specification = $page->find('#card_wind_2');
+            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
+            $specificationText = ( $specification->count() > 0) ? $specification->innerHtml : null;
+
+            return $this->fillRazmerDbRecord($page, $razmer, $descriptionText, $specificationText);
+    }
+
+    private function fillRazmerDbRecord($element, $razmer, $descriptionText, $specificationText)
+    {
+        $price = $element->find('.moon span')->text ?: null;
+        $id = 1;
+
+        $newRazmer = new Razmer([
+            'marka_id' => $razmer->marka_id ?: null,
+            'title' => $razmer->title ?: null,
+            'image' => $razmer->image ?: null,
+            'price' => $price ?: null,
+            'specifications' => $specificationText ?: null,
+            'description' => $descriptionText ?: null,
+        ]);
+        $newRazmer->save();
         return true;
     }
 }
