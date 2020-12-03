@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Marka extends Model
 {
@@ -11,4 +12,18 @@ class Marka extends Model
 
     protected $fillable = ['marka_id', 'subcategory_id', 'title', 'price', 'description', 'image', 'url'];
     public $timestamps = false;
+
+    /**
+     * Получить подкатегорию, которой принадлежит марка
+     * @return BelongsTo
+     */
+    public function subcategory()
+    {
+        return $this->belongsTo(Subcategory::class);
+    }
+
+    public function razmer()
+    {
+        return $this->hasMany(Razmer::class);
+    }
 }

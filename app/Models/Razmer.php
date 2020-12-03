@@ -11,4 +11,13 @@ class Razmer extends Model
 
     protected $fillable = ['marka_id', 'title', 'price', 'image', 'description', 'specifications'];
     public $timestamps = false;
+
+    /**
+     * Получить марку указанной модели
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function marka()
+    {
+        return $this->belongsTo(Marka::class);
+    }
 }
