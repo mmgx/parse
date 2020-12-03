@@ -238,19 +238,20 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         $subcategories = $this->getDomElementsByClass($this->getUrl($category->url), 'cabel_it li a');
         $id = 1;
 
-        for ($i = 1; $i <= $subcategories->count()-1; $i++) {
-            if ($subcategories[$i]->href){
+        foreach($subcategories as $subcategory){
+            if ($subcategory->href){
                 $newSubcategory = new Subcategory([
                     'subcategory_id' => ($category->id * 100) + $id,
                     'category_id' => $category->id,
-                    'title' => $subcategories[$i]->text,
-                    'url' => $subcategories[$i]->href,
+                    'title' => $subcategory->text,
+                    'url' => $subcategory->href,
                     'image' => $page->find('#largeImage')->src,
                 ]);
                 $newSubcategory->save();
                 $id++;
             }
         }
+
         return true;
     }
 
