@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MarkaController;
 use App\Http\Controllers\RazmerController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\XmlController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,4 +38,8 @@ Route::group(['prefix' => 'marka', 'as' => 'marka.'], function () {
 
 Route::group(['prefix' => 'razmer', 'as' => 'razmer.'], function () {
     Route::get('/get', [RazmerController::class, 'getRazmer'])->name('getRazmer');
+});
+
+Route::group(['prefix' => 'xml', 'as' => 'xml.'], function () {
+    Route::get('/get', [XmlController::class, 'makeXml'])->name('makeXml');
 });

@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Models\Category;
+use App\Models\Razmer;
 use Carbon\Carbon;
 use DOMDocument;
 
@@ -52,37 +53,50 @@ class XmlService extends Base\BaseService
         $categories = Category::query()->get();
 
 
-        foreach($categories as $category){
-            $categoryDom = $dom->createElement('category', $category->title);
-            $categoryDom->setAttribute('id', $category->id);
-            $categoriesDom->appendChild($categoryDom);
-
-            foreach($category->subcategories as $subcategory){
-                $subcategoryDom = $dom->createElement('category', $subcategory->title);
-                $subcategoryDom->setAttribute('id', $subcategory->subcategory_id);
-                $subcategoryDom->setAttribute('parentId', $subcategory->category_id);
-                $categoriesDom->appendChild($subcategoryDom);
-            }
-        }
-
-
-        $logins = array("User1", "User2", "User3"); // Логины пользователей
-        $passwords = array("Pass1", "Pass2", "Pass3"); // Пароли пользователей
-//        for ($i = 0; $i < count($logins); $i++) {
-//            $id = $i + 1; // id-пользователя
-//            $user = $dom->createElement("user"); // Создаём узел "user"
-//            $user->setAttribute("id", $id); // Устанавливаем атрибут "id" у узла "user"
-//            $login = $dom->createElement("login", $logins[$i]); // Создаём узел "login" с текстом внутри
-//            $password = $dom->createElement("password", $passwords[$i]); // Создаём узел "password" с текстом внутри
-//            $user->appendChild($login); // Добавляем в узел "user" узел "login"
-//            $user->appendChild($password);// Добавляем в узел "user" узел "password"
-//            $root->appendChild($user); // Добавляем в корневой узел "users" узел "user"
+//        foreach($categories as $category){
+//            $categoryDom = $dom->createElement('category', $category->title);
+//            $categoryDom->setAttribute('id', $category->id);
+//            $categoriesDom->appendChild($categoryDom);
+//
+//            foreach($category->subcategories as $subcategory){
+//                $subcategoryDom = $dom->createElement('category', $subcategory->title);
+//                $subcategoryDom->setAttribute('id', $subcategory->subcategory_id);
+//                $subcategoryDom->setAttribute('parentId', $subcategory->category_id);
+//                $categoriesDom->appendChild($subcategoryDom);
+//            }
 //        }
 
+        $deliveryOptions = $dom->createElement('delivery-options');
+        $shop->appendChild($deliveryOptions);
 
+        $option = $dom->createElement('option');
+        $option->setAttribute('cost', '200');
+        $option->setAttribute('days', '1');
+        $deliveryOptions->appendChild($option);
 
+        $offers = $dom->createElement('offers');
+        $shop->appendChild($offers);
 
+        Razmer::chunk(1, function ($elements) use ($offers, $dom) {
+            foreach ($elements as $element) {
+                $offer = $dom->createElement('offer');
+                $offer->setAttribute('id', $element->id);
+                $offer->setAttribute('bid', 80);
+                $offers->appendChild($offer);
 
+                $offerName = $dom->createElement('name', 'Кабель ' .$element->title. ' в Москве');
+                $offers->appendChild($offerName);
+
+                $offerUrl = $dom->createElement('url', $this->parseService->getUrl($element->marka->url));
+                $offers->appendChild($offerUrl);
+
+                $offerPrice = $dom->createElement('price', $element->price);
+                $offers->appendChild($offerPrice);
+
+                $offerCurrencyId = $dom->createElement('currencyId', 'RUR');
+                $offers->appendChild($offerCurrencyId);
+            }
+        });
 
 
 
