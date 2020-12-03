@@ -9,5 +9,5 @@ class Marka extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['marka_id', 'subcategory_id', 'name', 'title', 'price', 'description', 'image'];
+    protected $fillable = ['marka_id', 'subcategory_id', 'title', 'price', 'description', 'image', 'url'];
 }
