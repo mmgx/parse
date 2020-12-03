@@ -336,14 +336,15 @@ class ParseService extends Base\BaseService implements ParseServiceContract
 
     public function fillMarkaDB(Subcategory $subcategory)
     {
-        $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
-//        $workspace = $this->getDomElementsByClass('http://web.loc/model3.html', 'second_content .workspace');
+//        $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
+        $workspace = $this->getDomElementsByClass('http://web.loc/marka2.html', 'second_content .workspace');
         $elements = $workspace->find('.card_wind_over .basket_form');
 
-        $description = $workspace->find('#card_wind_1 p')->innerHtml();
+        $description = $workspace->find('#card_wind_1 p');
+        $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
 
         if ($elements->count() > 0){
-            return $this->fillMarkaDBRecord($elements, $subcategory, $description);
+            return $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
         }
         return;
     }
@@ -359,15 +360,15 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         $id = 1;
         foreach ($elements as $element) {
             $price = $element->find('.table_sech_pod')[1]->text ?: null;
-            $title = $element->find('a text')->text;
+            $title = $element->find('a text')->text ?: null;
 
             $newMarkas = new Marka([
-                'marka_id' => ($subcategory->id * 100) + $id,
-                'subcategory_id' => $subcategory->id,
-                'title' => $title,
-                'image' => $subcategory->image,
-                'price' => $price,
-                'url' => $element->find('a')->href,
+                'marka_id' => ($subcategory->id * 100 + $id) ?: null,
+                'subcategory_id' => $subcategory->subcategory_id?: null,
+                'title' => $title ?: null,
+                'image' => $subcategory->image ?: null,
+                'price' => $price ?: null,
+                'url' => $element->find('a')->href ?: null,
                 'description' => $description ?: null,
             ]);
             $newMarkas->save();
