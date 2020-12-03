@@ -10,4 +10,5 @@ class Marka extends Model
     use HasFactory;
 
     protected $fillable = ['marka_id', 'subcategory_id', 'title', 'price', 'description', 'image', 'url'];
+    public $timestamps = false;
 }

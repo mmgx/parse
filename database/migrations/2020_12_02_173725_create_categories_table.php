@@ -18,7 +18,6 @@ class CreateCategoriesTable extends Migration
             $table->string('title');
             $table->string('image')->nullable();
             $table->string('url')->nullable();
-            $table->timestamps();
         });
     }
 

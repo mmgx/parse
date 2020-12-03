@@ -10,4 +10,5 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'image', 'url'];
+    public $timestamps = false;
 }

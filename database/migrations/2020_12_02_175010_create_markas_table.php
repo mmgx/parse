@@ -21,7 +21,6 @@ class CreateMarkasTable extends Migration
             $table->string('price')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->timestamps();
         });
     }
 
