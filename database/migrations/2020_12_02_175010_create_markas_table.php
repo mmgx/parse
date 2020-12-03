@@ -19,7 +19,7 @@ class CreateMarkasTable extends Migration
             $table->bigInteger('subcategory_id')->nullable();
             $table->string('title');
             $table->string('price')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });
