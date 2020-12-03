@@ -346,13 +346,12 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillMarkaDB(Subcategory $subcategory)
     {
         $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
-//        $workspace = $this->getDomElementsByClass('http://web.loc/marka4.html', 'second_content .workspace');
         $elements = $workspace->find('.card_wind_over .basket_form');
 
         if ($elements->count() > 0){
 
             $description = $workspace->find('#card_wind_1 p');
-            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
+            $descriptionText = ( $description->count() > 0) ? 'dsf' : null;
 
             return $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
         }
@@ -371,10 +370,10 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         foreach ($elements as $element) {
 
                 $price = $element->find('.table_sech_pod')[1]->text ?: null;
-                $title = $element->find('a text')->text ?: null;
+                $title = $element->find('a')->text ?: null;
                 $link = $element->find('a')[0]->href ?: null;
 
-                if ($link){
+                if ($element->find('a text') && !empty($title)){
                     $newMarkas = new Marka([
                         'marka_id' => ($subcategory->subcategory_id * 1000 + $id) ?: null,
                         'subcategory_id' => $subcategory->subcategory_id ?: null,
@@ -408,13 +407,15 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         $page = $this->getDomElementsByClass($this->getUrl($razmer->url), 'second_content .workspace');
             $description = $page->find('#card_wind_1');
             $specification = $page->find('#card_wind_2');
+            $link = $page->find('.table_sech_name a')->href;
+            $url = ($link) ? $link : null;
             $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
             $specificationText = ( $specification->count() > 0) ? $specification->innerHtml : null;
 
-            return $this->fillRazmerDbRecord($page, $razmer, $descriptionText, $specificationText);
+            return $this->fillRazmerDbRecord($page, $razmer, $url, $descriptionText, $specificationText);
     }
 
-    private function fillRazmerDbRecord($element, $razmer, $descriptionText, $specificationText)
+    private function fillRazmerDbRecord($element, $razmer, $url, $descriptionText, $specificationText)
     {
         $price = $element->find('.moon span')->text ?: null;
         $newRazmer = new Razmer([
@@ -422,6 +423,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
             'title' => $razmer->title ?: null,
             'image' => $razmer->image ?: null,
             'price' => $price ?: null,
+            'url' => $url,
             'specifications' => $specificationText ?: null,
             'description' => $descriptionText ?: null,
         ]);

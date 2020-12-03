@@ -21,6 +21,7 @@ class CreateRazmersTable extends Migration
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->text('specifications')->nullable();
+            $table->string('url')->nullable();
         });
     }
 
