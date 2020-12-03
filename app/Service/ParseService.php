@@ -241,7 +241,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         for ($i = 1; $i <= $subcategories->count()-1; $i++) {
             if ($subcategories[$i]->href){
                 $newSubcategory = new Subcategory([
-                    'subcategory_id' => ($category->id * 10000) + $id,
+                    'subcategory_id' => ($category->id * 100) + $id,
                     'category_id' => $category->id,
                     'title' => $subcategories[$i]->text,
                     'url' => $subcategories[$i]->href,
@@ -374,8 +374,8 @@ class ParseService extends Base\BaseService implements ParseServiceContract
                 $link = $element->find('a')[0]->href;
 
                 $newMarkas = new Marka([
-                    'marka_id' => ($subcategory->id * 100 + $id) ?: null,
-                    'subcategory_id' => $subcategory->subcategory_id?: null,
+                    'marka_id' => ($subcategory->subcategory_id * 1000 + $id) ?: null,
+                    'subcategory_id' => $subcategory->subcategory_id ?: null,
                     'title' => $title ?: null,
                     'image' => $subcategory->image ?: null,
                     'price' => $price ?: null,
