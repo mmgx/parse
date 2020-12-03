@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Service\ParseService;
 use Illuminate\Console\Command;
 
-class GetCategoriesInfo extends Command
+class GetRazmenInfo extends Command
 {
 
     protected $parserService;
@@ -15,7 +15,7 @@ class GetCategoriesInfo extends Command
      *
      * @var string
      */
-    protected $signature = 'get:categories';
+    protected $signature = 'get:razmer';
 
     /**
      * The console command description.
@@ -27,12 +27,12 @@ class GetCategoriesInfo extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ParseService $parseService
      */
-    public function __construct(ParseService $parserService)
+    public function __construct(ParseService $parseService)
     {
         parent::__construct();
-        $this->parserService = $parserService;
+        $this->parserService = $parseService;
     }
 
     /**
@@ -42,7 +42,6 @@ class GetCategoriesInfo extends Command
      */
     public function handle()
     {
-        $this->parserService->getCategoriesToDB();
         return 0;
     }
 }

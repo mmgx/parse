@@ -33,6 +33,7 @@ class GetSubcategoriesInfo extends Command
     public function __construct(ParseService $parserService)
     {
         parent::__construct();
+        $this->parserService = $parserService;
     }
 
     /**
