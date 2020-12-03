@@ -328,7 +328,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillMarkas(\Illuminate\Database\Eloquent\Collection $subcategories)
     {
         foreach ($subcategories as $subcategory) {
-            if (($subcategory->id >= 1) && ($subcategory->id <= 30))
+//            if (($subcategory->id >= 1) && ($subcategory->id <= 300))
                 $this->fillMarkaDB($subcategory);
         }
         return true;
@@ -336,14 +336,15 @@ class ParseService extends Base\BaseService implements ParseServiceContract
 
     public function fillMarkaDB(Subcategory $subcategory)
     {
-//        $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
-        $workspace = $this->getDomElementsByClass('http://web.loc/marka2.html', 'second_content .workspace');
+        $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
+//        $workspace = $this->getDomElementsByClass('http://web.loc/marka4.html', 'second_content .workspace');
         $elements = $workspace->find('.card_wind_over .basket_form');
 
-        $description = $workspace->find('#card_wind_1 p');
-        $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
-
         if ($elements->count() > 0){
+
+            $description = $workspace->find('#card_wind_1 p');
+            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
+
             return $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
         }
         return;
@@ -359,21 +360,24 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     {
         $id = 1;
         foreach ($elements as $element) {
-            $price = $element->find('.table_sech_pod')[1]->text ?: null;
-            $title = $element->find('a text')->text ?: null;
 
-            $newMarkas = new Marka([
-                'marka_id' => ($subcategory->id * 100 + $id) ?: null,
-                'subcategory_id' => $subcategory->subcategory_id?: null,
-                'title' => $title ?: null,
-                'image' => $subcategory->image ?: null,
-                'price' => $price ?: null,
-                'url' => $element->find('a')->href ?: null,
-                'description' => $description ?: null,
-            ]);
-            $newMarkas->save();
-            $id++;
+                $price = $element->find('.table_sech_pod')[1]->text ?: null;
+                $title = $element->find('a text')->text ?: null;
+                $link = $element->find('a')[0]->href;
+
+                $newMarkas = new Marka([
+                    'marka_id' => ($subcategory->id * 100 + $id) ?: null,
+                    'subcategory_id' => $subcategory->subcategory_id?: null,
+                    'title' => $title ?: null,
+                    'image' => $subcategory->image ?: null,
+                    'price' => $price ?: null,
+                    'url' => $link ?: null,
+                    'description' => $description ?: null,
+                ]);
+                $newMarkas->save();
+                $id++;
         }
+
         return true;
     }
 }
