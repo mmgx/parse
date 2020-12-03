@@ -328,7 +328,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillMarkas(\Illuminate\Database\Eloquent\Collection $subcategories)
     {
         foreach ($subcategories as $subcategory) {
-//            if (($subcategory->id >= 1) && ($subcategory->id <= 30))
+            if (($subcategory->id >= 1) && ($subcategory->id <= 30))
                 $this->fillMarkaDB($subcategory);
         }
         return true;
@@ -336,13 +336,28 @@ class ParseService extends Base\BaseService implements ParseServiceContract
 
     public function fillMarkaDB(Subcategory $subcategory)
     {
-        $workspace = $this->getDomElementsByClass('http://web.loc/marka2.html', 'second_content .workspace');
+        $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
+//        $workspace = $this->getDomElementsByClass('http://web.loc/model3.html', 'second_content .workspace');
         $elements = $workspace->find('.card_wind_over .basket_form');
-        $description = $workspace->find('#card_wind_1 p')->innerHtml();
-        $id = 1;
 
-        foreach ($elements as $element)
-        {
+        $description = $workspace->find('#card_wind_1 p')->innerHtml();
+
+        if ($elements->count() > 0){
+            return $this->fillMarkaDBRecord($elements, $subcategory, $description);
+        }
+        return;
+    }
+
+    /**
+     * @param $elements
+     * @param Subcategory $subcategory
+     * @param $description
+     * @return bool
+     */
+    protected function fillMarkaDBRecord($elements, Subcategory $subcategory, $description)
+    {
+        $id = 1;
+        foreach ($elements as $element) {
             $price = $element->find('.table_sech_pod')[1]->text ?: null;
             $title = $element->find('a text')->text;
 
