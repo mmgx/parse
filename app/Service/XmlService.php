@@ -22,7 +22,9 @@ class XmlService extends Base\BaseService
         $time = $datetime->setTimezone('Europe/Moscow')->format('H:i:s');
         $dateString = $date.'T'.$time.'+03:00';
 
-        $dom = new domDocument("1.0", "utf-8"); // Создаём XML-документ версии 1.0 с кодировкой utf-8
+        $dom = new domDocument("1.0", "utf-8");
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
         $root = $dom->createElement("yml_catalog");
         $root->setAttribute('date',$dateString);
         $dom->appendChild($root);
@@ -53,18 +55,18 @@ class XmlService extends Base\BaseService
         $categories = Category::query()->get();
 
 
-//        foreach($categories as $category){
-//            $categoryDom = $dom->createElement('category', $category->title);
-//            $categoryDom->setAttribute('id', $category->id);
-//            $categoriesDom->appendChild($categoryDom);
-//
-//            foreach($category->subcategories as $subcategory){
-//                $subcategoryDom = $dom->createElement('category', $subcategory->title);
-//                $subcategoryDom->setAttribute('id', $subcategory->subcategory_id);
-//                $subcategoryDom->setAttribute('parentId', $subcategory->category_id);
-//                $categoriesDom->appendChild($subcategoryDom);
-//            }
-//        }
+        foreach($categories as $category){
+            $categoryDom = $dom->createElement('category', $category->title);
+            $categoryDom->setAttribute('id', $category->id);
+            $categoriesDom->appendChild($categoryDom);
+
+            foreach($category->subcategories as $subcategory){
+                $subcategoryDom = $dom->createElement('category', $subcategory->title);
+                $subcategoryDom->setAttribute('id', $subcategory->subcategory_id);
+                $subcategoryDom->setAttribute('parentId', $subcategory->category_id);
+                $categoriesDom->appendChild($subcategoryDom);
+            }
+        }
 
         $deliveryOptions = $dom->createElement('delivery-options');
         $shop->appendChild($deliveryOptions);
@@ -85,23 +87,41 @@ class XmlService extends Base\BaseService
                 $offers->appendChild($offer);
 
                 $offerName = $dom->createElement('name', 'Кабель ' .$element->title. ' в Москве');
-                $offers->appendChild($offerName);
+                $offer->appendChild($offerName);
 
-                $offerUrl = $dom->createElement('url', $this->parseService->getUrl($element->marka->url));
-                $offers->appendChild($offerUrl);
+                $offerUrl = $dom->createElement('url', $this->parseService->getUrl($element->url));
+                $offer->appendChild($offerUrl);
 
                 $offerPrice = $dom->createElement('price', $element->price);
-                $offers->appendChild($offerPrice);
+                $offer->appendChild($offerPrice);
 
                 $offerCurrencyId = $dom->createElement('currencyId', 'RUR');
-                $offers->appendChild($offerCurrencyId);
+                $offer->appendChild($offerCurrencyId);
+
+                $offerCategoryId = $dom->createElement('categoryId', $element->subcategory->subcategory_id);
+                $offer->appendChild($offerCategoryId);
+
+                $offerPicture = $dom->createElement('picture', $this->parseService->getUrl($element->image));
+                $offer->appendChild($offerPicture);
+
+                $offerDelivery = $dom->createElement('delivery', 'true');
+                $offer->appendChild($offerDelivery);
+
+                $offerStore = $dom->createElement('store', 'true');
+                $offer->appendChild($offerStore);
+
+                $description = $dom->createElement('description');
+                $offer->appendChild($description);
+
+                $cdata = $dom->createCDATASection($element->description);
+                $description->appendChild($cdata);
             }
         });
 
 
 
-        dd($dom);
-        $dom->save("users.xml"); // Сохраняем полученный XML-документ в файл
+        dump($dom);
+        $dom->save("file.xml"); // Сохраняем полученный XML-документ в файл
     }
 
 }
