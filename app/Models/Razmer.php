@@ -18,6 +18,17 @@ class Razmer extends Model
      */
     public function marka()
     {
-        return $this->belongsTo(Marka::class);
+        return $this->belongsTo(Marka::class, 'marka_id', 'marka_id');
     }
+
+    /**
+     * Получить подкатегорию указанной модели
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    public function subcategory()
+    {
+        return $this->hasOneThrough(Subcategory::class, Marka::class, 'marka_id', 'category_id');
+    }
+
+
 }
