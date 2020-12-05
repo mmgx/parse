@@ -42,7 +42,7 @@ class GetMarkaInfo1 extends Command
      */
     public function handle()
     {
-        $subcategories = Subcategory::query()->where('id', '<=', 3500);
+        $subcategories = Subcategory::query()->where('id', '<=', 3500)->get();
         $this->parserService->fillMarkas($subcategories);
         return 0;
     }

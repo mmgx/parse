@@ -4,6 +4,8 @@ namespace App\Console;
 
 use App\Console\Commands\GetCategoriesInfo;
 use App\Console\Commands\GetMarkaInfo;
+use App\Console\Commands\GetMarkaInfo1;
+use App\Console\Commands\GetMarkaInfo2;
 use App\Console\Commands\GetRazmenInfo;
 use App\Console\Commands\GetSubcategoriesInfo;
 use Illuminate\Console\Scheduling\Schedule;
@@ -21,6 +23,8 @@ class Kernel extends ConsoleKernel
         GetCategoriesInfo::class,
         GetSubcategoriesInfo::class,
         GetRazmenInfo::class,
+        GetMarkaInfo1::class,
+        GetMarkaInfo2::class,
     ];
 
     /**
