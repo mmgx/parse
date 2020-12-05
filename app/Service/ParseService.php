@@ -375,7 +375,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
 
                 if ($element->find('a text') && !empty($title)){
                     $newMarkas = new Marka([
-                        'marka_id' => ($subcategory->subcategory_id * 1000 + $id) ?: null,
+                        'marka_id' => ($subcategory->subcategory_id * 10000 + $id) ?: null,
                         'subcategory_id' => $subcategory->subcategory_id ?: null,
                         'title' => $title ?: null,
                         'image' => $subcategory->image ?: null,
