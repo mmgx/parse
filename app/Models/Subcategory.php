@@ -29,6 +29,6 @@ class Subcategory extends Model
      */
     public function markas()
     {
-        return $this->hasMany(Marka::class);
+        return $this->hasMany(Marka::class, 'subcategory_id', 'subcategory_id');
     }
 }

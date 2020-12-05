@@ -19,11 +19,11 @@ class Marka extends Model
      */
     public function subcategory()
     {
-        return $this->belongsTo(Subcategory::class);
+        return $this->belongsTo(Subcategory::class, 'subcategory_id', 'subcategory_id');
     }
 
     public function razmer()
     {
-        return $this->hasMany(Razmer::class);
+        return $this->hasMany(Razmer::class, 'marka_id', 'marka_id');
     }
 }
