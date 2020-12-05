@@ -15,7 +15,26 @@ class XmlService extends Base\BaseService
         $this->parseService = $parseService;
     }
 
+    public function getFilesCount()
+    {
+        $offersCount = Razmer::query()->count();
+        $splitCount = env('XML_SPLIT', 1000);
+        $count = ($offersCount % $splitCount > 0) ? 1: 0;
+        (int)$filesCount = $offersCount / $splitCount + $count;
+        return $filesCount;
+    }
+
     public function makeXmlBody()
+    {
+        for ($i = 1; $i <= $this->getFilesCount(); $i++) {
+            dump($i);
+
+            $this->makeFile();
+        }
+
+    }
+
+    private function makeFile()
     {
         $datetime = Carbon::now();
         $date = $datetime->format('Y-m-d');
@@ -79,7 +98,7 @@ class XmlService extends Base\BaseService
         $offers = $dom->createElement('offers');
         $shop->appendChild($offers);
 
-        Razmer::chunk(1, function ($elements) use ($offers, $dom) {
+        Razmer::chunk(env('XML_CHUNK', 100), function ($elements) use ($offers, $dom) {
             foreach ($elements as $element) {
                 $offer = $dom->createElement('offer');
                 $offer->setAttribute('id', $element->id);
@@ -98,7 +117,7 @@ class XmlService extends Base\BaseService
                 $offerCurrencyId = $dom->createElement('currencyId', 'RUR');
                 $offer->appendChild($offerCurrencyId);
 
-                $offerCategoryId = $dom->createElement('categoryId', $element->subcategory->subcategory_id);
+                $offerCategoryId = $dom->createElement('categoryId', $element->marka->subcategory->subcategory_id);
                 $offer->appendChild($offerCategoryId);
 
                 $offerPicture = $dom->createElement('picture', $this->parseService->getUrl($element->image));
@@ -117,8 +136,6 @@ class XmlService extends Base\BaseService
                 $description->appendChild($cdata);
             }
         });
-
-
 
         dump($dom);
         $dom->save("file.xml"); // Сохраняем полученный XML-документ в файл

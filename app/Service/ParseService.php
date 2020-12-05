@@ -271,7 +271,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
      */
     public function getMarkas()
     {
-        return Marka::query()->first()->get();
+        return Marka::query()->get();
     }
 
     public function fillRazmers(\Illuminate\Database\Eloquent\Collection $markas)
@@ -346,16 +346,20 @@ class ParseService extends Base\BaseService implements ParseServiceContract
     public function fillMarkaDB(Subcategory $subcategory)
     {
         $workspace = $this->getDomElementsByClass($this->getUrl($subcategory->url), 'second_content .workspace');
-        $elements = $workspace->find('.card_wind_over .basket_form');
+        if (($workspace->count()) > 0){
+            $elements = $workspace->find('.card_wind_over .basket_form');
+            if ($elements->count() > 0){
 
-        if ($elements->count() > 0){
-
-            $description = $workspace->find('#card_wind_1 p');
-            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
-
-            return $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
+                $description = $workspace->find('#card_wind_1 p');
+                $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
+                $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
+                return true;
+            } else{
+                
+            }
         }
-        return;
+
+        return false;
     }
 
     /**
