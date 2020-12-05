@@ -351,7 +351,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         if ($elements->count() > 0){
 
             $description = $workspace->find('#card_wind_1 p');
-            $descriptionText = ( $description->count() > 0) ? 'dsf' : null;
+            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
 
             return $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
         }
