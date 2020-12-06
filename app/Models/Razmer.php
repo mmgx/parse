@@ -9,7 +9,7 @@ class Razmer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['marka_id', 'title', 'price', 'image', 'description', 'specifications', 'url'];
+    protected $fillable = ['marka_id', 'title', 'price', 'image', 'description', 'specifications', 'url', 'is_razmer'];
     public $timestamps = false;
 
     /**

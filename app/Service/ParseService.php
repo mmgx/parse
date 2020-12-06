@@ -355,7 +355,7 @@ class ParseService extends Base\BaseService implements ParseServiceContract
                 $this->fillMarkaDBRecord($elements, $subcategory, $descriptionText);
                 return true;
             } else{
-                
+
             }
         }
 
@@ -406,32 +406,74 @@ class ParseService extends Base\BaseService implements ParseServiceContract
         return $model::query()->orderBy($column, 'desc')->first()->$id;
     }
 
+
     private function fillRazmer($razmer)
     {
         $page = $this->getDomElementsByClass($this->getUrl($razmer->url), 'second_content .workspace');
-            $description = $page->find('#card_wind_1');
-            $specification = $page->find('#card_wind_2');
-            $link = $page->find('.table_sech_name a')->href;
-            $url = ($link) ? $link : null;
+        $description = $page->find('#card_wind_1');
+        $specification = $page->find('#card_wind_2');
+        $link = $page->find('.table_sech_name a');
+        $image = $page->find('#largeImage')->src ?: null;
+        $price = $page->find('.moon span')->text ?: null;
+        dump($price);
+
+        if (($link->count()) > 0){
+            $url = ($link->href) ? $link->href : null;
+            $isMarkaRazmer = true;
+            $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
+            $specificationText = ( $specification->count() > 0) ? $specification->innerHtml : null;
+            return $this->fillRazmerDbRecordRazmer($page, $razmer, $url, $descriptionText, $specificationText, $isMarkaRazmer);
+        } else {
+            $isMarkaRazmer = false;
+            $url = ($razmer->url ) ? $razmer->url  : null;
             $descriptionText = ( $description->count() > 0) ? $description->innerHtml : null;
             $specificationText = ( $specification->count() > 0) ? $specification->innerHtml : null;
 
-            return $this->fillRazmerDbRecord($page, $razmer, $url, $descriptionText, $specificationText);
+
+            return $this->fillRazmerDbRecordMarka($page, $razmer, $url, $descriptionText, $specificationText, $isMarkaRazmer, $price, $image);
+        }
     }
 
-    private function fillRazmerDbRecord($element, $razmer, $url, $descriptionText, $specificationText)
+
+    private function fillRazmerDbRecordRazmer($element, $razmer, $url, $descriptionText, $specificationText, $isMarkaRazmer)
     {
-        $price = $element->find('.moon span')->text ?: null;
-        $newRazmer = new Razmer([
-            'marka_id' => $razmer->marka_id ?: null,
-            'title' => $razmer->title ?: null,
-            'image' => $razmer->image ?: null,
-            'price' => $price ?: null,
-            'url' => $url,
-            'specifications' => $specificationText ?: null,
-            'description' => $descriptionText ?: null,
-        ]);
-        $newRazmer->save();
-        return true;
+        $workspace = $this->getDomElementsByClass($this->getUrl($url), 'second_content .workspace');
+        if (($workspace->count()) > 0){
+            $price = $workspace->find('.moon span')->text ?: null;
+            $image = $element->find('#largeImage')->src ?: null;
+            $newRazmer = new Razmer([
+                'marka_id' => $razmer->marka_id ?: null,
+                'title' => $razmer->title ?: null,
+                'image' => $image ?: null,
+                'price' => $price ?: null,
+                'url' => $url,
+                'specifications' => $specificationText ?: null,
+                'description' => $descriptionText ?: null,
+                'is_razmer' => $isMarkaRazmer,
+            ]);
+            $newRazmer->save();
+            return true;
+        }
+
     }
+
+
+    private function fillRazmerDbRecordMarka($element, $razmer, $url, $descriptionText, $specificationText, $isMarkaRazmer, $price, $image)
+    {
+//        $workspace = $this->getDomElementsByClass($this->getUrl($url), 'second_content .workspace');
+            $newRazmer = new Razmer([
+                'marka_id' => $razmer->marka_id ?: null,
+                'title' => $razmer->title ?: null,
+                'image' => $image,
+                'price' => $price ?: null,
+                'url' => $url,
+                'specifications' => $specificationText ?: null,
+                'description' => $descriptionText ?: null,
+                'is_razmer' => $isMarkaRazmer,
+            ]);
+            $newRazmer->save();
+            return true;
+
+    }
+
 }

@@ -7,6 +7,7 @@ use App\Console\Commands\GetMarkaInfo;
 use App\Console\Commands\GetMarkaInfo1;
 use App\Console\Commands\GetMarkaInfo2;
 use App\Console\Commands\GetRazmenInfo;
+use App\Console\Commands\GetRazmenInfoTest;
 use App\Console\Commands\GetSubcategoriesInfo;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
         GetRazmenInfo::class,
         GetMarkaInfo1::class,
         GetMarkaInfo2::class,
+        GetRazmenInfoTest::class,
     ];
 
     /**
